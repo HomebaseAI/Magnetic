@@ -119,6 +119,11 @@ import SpriteKit
         self.text = text
         self.image = image
         self.color = color
+
+        if color.description == UIColor.white.description {
+            self.strokeColor = UIColor(red: 185/255.0, green: 185/255.0, blue: 185/255.0, alpha: 1.0)
+            self.lineWidth = 1
+        }
     }
     
     override open func removeFromParent() {
@@ -131,7 +136,7 @@ import SpriteKit
      The animation to execute when the node is selected.
      */
     open func selectedAnimation() {
-        run(.scale(to: 4/3, duration: 0.2))
+        run(.scale(to: 2.3, duration: 0.2))
         if let texture = texture {
             sprite.run(.setTexture(texture))
         }

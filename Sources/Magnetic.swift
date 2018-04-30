@@ -83,18 +83,33 @@ import SpriteKit
       
         magneticField.region = SKRegion(radius: radius)
         magneticField.minimumRadius = radius
-        magneticField.strength = strength
+        magneticField.strength = strength * 2
         magneticField.position = CGPoint(x: size.width / 2, y: size.height / 2)
     }
     
     override open func addChild(_ node: SKNode) {
+        // 7 * 5
         var x = -node.frame.width // left
         if children.count % 2 == 0 {
             x = frame.width + node.frame.width // right
         }
         let y = CGFloat.random(node.frame.height, frame.height - node.frame.height)
-        node.position = CGPoint(x: x, y: y)
+        node.position = generatePosition(node: node)//CGPoint(x: (frame.width / 2) - (node.frame.width / 2), y: (frame.height / 2) - (node.frame.height / 2))
         super.addChild(node)
+    }
+    
+    private func generatePosition(node: SKNode) -> CGPoint{
+        let idx = children.count - 1
+        
+        let y = idx % 5
+        let _x = idx / 5
+        
+        var x = -node.frame.width // left
+        if _x % 2 == 0 {
+            x = frame.width + node.frame.width // right
+        }
+        
+        return CGPoint(x: x, y: CGFloat(y) * node.frame.height * 1.01)
     }
     
 }
@@ -128,10 +143,7 @@ extension Magnetic {
             let point = touches.first?.location(in: self),
             let node = nodes(at: point).compactMap({ $0 as? Node }).filter({ $0.path!.contains(convert(point, to: $0)) }).first
         {
-            if node.isSelected {
-                node.isSelected = false
-                magneticDelegate?.magnetic(self, didDeselect: node)
-            } else {
+            if !node.isSelected {
                 if !allowsMultipleSelection, let selectedNode = selectedChildren.first {
                     selectedNode.isSelected = false
                     magneticDelegate?.magnetic(self, didDeselect: selectedNode)
